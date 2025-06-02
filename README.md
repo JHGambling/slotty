@@ -20,7 +20,9 @@ This is SLOTTY, the slot machine for the JHGambling Casino.
 
 - `tsconfig.json`: TypeScript configuration file specifying compiler options.
 - `package.json`: npm configuration file listing dependencies and scripts.
-=======
+
+---
+
 This is SLOTTY, the slot machine for the JHGambling Casino
 ---
 
