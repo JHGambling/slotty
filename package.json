@@ -1,0 +1,24 @@
+{
+  "name": "slotty",
+  "version": "1.0.0",
+  "description": "SLOTTY, the slot machine for the JHGambling Casino",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^4.5.4",
+    "ts-node": "^10.4.0",
+    "express": "^4.17.1"
+  },
+  "keywords": [
+    "slot machine",
+    "gambling",
+    "casino"
+  ],
+  "author": "Martin Hangl",
+  "license": "MIT"
+}
