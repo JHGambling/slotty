@@ -1,5 +1,4 @@
 # slotty
-<<<<<<< HEAD
 This is SLOTTY, the slot machine for the JHGambling Casino.
 
 ## Project Structure
@@ -28,4 +27,3 @@ This is SLOTTY, the slot machine for the JHGambling Casino
 ## Our mascot:
 
 ![image](mascot.jpeg)
->>>>>>> ccd9c1e84a44951c8e59af44e68299747ef5a82f
