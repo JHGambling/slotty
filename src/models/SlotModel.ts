@@ -1,29 +1,18 @@
-class SlotModel {
-    reels: string[][];
-    private currentState: string[];
+export class SlotModel {
+    symbols: string[] = ['🍒', '🍋', '🍊', '🍉', '🍇', '⭐'];
+    rows: number = 3;
+    cols: number = 5;
+    state: string[][] = [];
 
-    constructor() {
-        this.reels = [
-            ['🍒', '🍋', '🍊', '🍉', '🍇', '⭐'],
-            ['🍒', '🍋', '🍊', '🍉', '🍇', '⭐'],
-            ['🍒', '🍋', '🍊', '🍉', '🍇', '⭐']
-        ];
-        this.currentState = [];
-    }
-
-    spin(): string[] {
-        this.currentState = this.reels.map(reel => {
-            const randomIndex = Math.floor(Math.random() * reel.length);
-            return reel[randomIndex];
-        });
-        return this.currentState;
-    }
-
-    reset(): void {
-        this.currentState = [];
-    }
-
-    getCurrentState(): string[] {
-        return this.currentState;
+    spin(): string[][] {
+        this.state = [];
+        for (let r = 0; r < this.rows; r++) {
+            const row: string[] = [];
+            for (let c = 0; c < this.cols; c++) {
+                row.push(this.symbols[Math.floor(Math.random() * this.symbols.length)]);
+            }
+            this.state.push(row);
+        }
+        return this.state;
     }
 }

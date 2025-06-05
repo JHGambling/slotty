@@ -1,19 +1,30 @@
+import { SlotModel } from '../models/SlotModel.js';
+import { SlotView } from '../views/SlotView.js';
+
 export class SlotController {
-    private model: any;
-    private view: any;
-
-    constructor(model: any, view: any) {
-        this.model = model;
-        this.view = view;
+    private spacePressed = false;
+    constructor(private model: SlotModel, private view: SlotView) {
+        this.init();
     }
 
-    public startGame(): void {
-        this.model.spin();
-        this.view.updateDisplay(this.model.getReels());
+    init() {
+        this.view.render(this.model.spin());
+        document.getElementById('spin-btn')!.addEventListener('click', () => this.spin());
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && !this.spacePressed) {
+                this.spacePressed = true;
+                this.spin();
+            }
+        });
+        document.addEventListener('keyup', (e) => {
+            if (e.code === 'Space') {
+                this.spacePressed = false;
+            }
+        });
     }
 
-    public stopGame(): void {
-        this.model.reset();
-        this.view.updateDisplay(this.model.getReels());
+    spin() {
+        const state = this.model.spin();
+        this.view.render(state);
     }
 }

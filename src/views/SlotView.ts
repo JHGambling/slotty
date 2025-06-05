@@ -1,13 +1,20 @@
-class SlotView {
+export class SlotView {
+    reelsDiv: HTMLElement;
+
     constructor() {
-        // Initialize the view elements
+        this.reelsDiv = document.getElementById('reels')!;
     }
 
-    render() {
-        // Code to render the slot machine interface
-    }
-
-    updateDisplay(reels: string[]) {
-        // Code to update the display with the current state of the reels
+    render(state: string[][]) {
+        let html = '<table class="slot-table">';
+        for (const row of state) {
+            html += '<tr>';
+            for (const symbol of row) {
+                html += `<td>${symbol}</td>`;
+            }
+            html += '</tr>';
+        }
+        html += '</table>';
+        this.reelsDiv.innerHTML = html;
     }
 }

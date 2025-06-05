@@ -2,63 +2,45 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
+    background: #f0f0f0;
     margin: 0;
     padding: 0;
 }
 
-.container {
-    width: 80%;
-    margin: auto;
-    overflow: hidden;
-}
-
-.header {
-    background: #35424a;
-    color: #ffffff;
-    padding: 10px 0;
+#slot-machine {
+    width: 500px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    padding: 30px;
     text-align: center;
 }
 
-.slot-machine {
-    display: flex;
-    justify-content: center;
-    margin: 20px 0;
+.slot-table {
+    margin: 20px auto;
+    border-collapse: collapse;
 }
 
-.reel {
-    width: 100px;
-    height: 100px;
+.slot-table td {
+    width: 60px;
+    height: 60px;
     border: 2px solid #35424a;
-    background: #ffffff;
-    margin: 0 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    font-weight: bold;
-}
-
-.button {
-    background: #35424a;
-    color: #ffffff;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-size: 18px;
-    margin: 10px;
-}
-
-.button:hover {
-    background: #2c3e50;
-}
-
-.footer {
+    font-size: 2.5rem;
     text-align: center;
-    padding: 20px 0;
+    background: #fafafa;
+}
+
+#spin-btn {
+    padding: 10px 30px;
+    font-size: 1.2rem;
     background: #35424a;
-    color: #ffffff;
-    position: relative;
-    bottom: 0;
-    width: 100%;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#spin-btn:hover {
+    background: #2c3e50;
 }
