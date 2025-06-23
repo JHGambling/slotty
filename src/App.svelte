@@ -60,10 +60,12 @@ function checkWin(state: string[][]): { type: string, reward: number } | null {
 
 function triggerWinAnimation(type: string) {
     if (type.includes('JACKPOT')) {
+        playSound(jackpotSound);
         showJackpot = false;
         setTimeout(() => { showJackpot = true; }, 10); // retrigger
         setTimeout(() => { showJackpot = false; }, 3500);
     } else {
+        playSound(winSound);
         showOtherWin = false;
         setTimeout(() => { showOtherWin = true; }, 10);
         setTimeout(() => { showOtherWin = false; }, 2000);
@@ -72,6 +74,7 @@ function triggerWinAnimation(type: string) {
 
 function spin() {
     if (spinning || budget < SPIN_COST) return;
+    playSound(spinSound);
     spinning = true;
     message = '';
     winType = '';
@@ -157,9 +160,33 @@ function forceNoWin() {
     showOtherWin = false;
 }
 
+// Sound effects
+const spinSound = new Audio('/sounds/spin.flac');
+const winSound = new Audio('/sounds/win.wav');
+const jackpotSound = new Audio('/sounds/jackpot.wav');
+
+function playSound(sound: HTMLAudioElement) {
+    sound.currentTime = 0;
+    sound.play();
+}
+
+function unlockSounds() {
+    // Play a nearly-silent sound to unlock audio
+    spinSound.volume = 0.01;
+    spinSound.play().then(() => {
+        spinSound.pause();
+        spinSound.currentTime = 0;
+        spinSound.volume = 1;
+    }).catch(() => {});
+    winSound.load();
+    jackpotSound.load();
+    window.removeEventListener('pointerdown', unlockSounds);
+    window.removeEventListener('keydown', unlockSounds);
+}
+
 onMount(() => {
-    window.addEventListener('keydown', handleKeydown);
-    window.addEventListener('keyup', handleKeyup);
+    window.addEventListener('pointerdown', unlockSounds);
+    window.addEventListener('keydown', unlockSounds);
     randomizeState();
     // Expose test functions for F12 console
     (window as any).forceJackpot = forceJackpot;
