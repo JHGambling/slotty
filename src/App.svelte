@@ -14,8 +14,8 @@ let winType = '';
 let showJackpot = false;
 let showOtherWin = false;
 let winMatrix: boolean[][] = Array.from({ length: rows }, () => Array(cols).fill(false));
-const SPIN_COST = 10;
-const JACKPOT_REWARD = 30;
+const SPIN_COST = 5;
+const JACKPOT_REWARD = 50;
 const COLUMN_REWARD = 10;
 const DIAGONAL_REWARD = 15;
 
@@ -162,10 +162,10 @@ onMount(() => {
     window.addEventListener('keyup', handleKeyup);
     randomizeState();
     // Expose test functions for F12 console
-    window.forceJackpot = forceJackpot;
-    window.forceColumnWin = forceColumnWin;
-    window.forceDiagonalWin = forceDiagonalWin;
-    window.forceNoWin = forceNoWin;
+    (window as any).forceJackpot = forceJackpot;
+    (window as any).forceColumnWin = forceColumnWin;
+    (window as any).forceDiagonalWin = forceDiagonalWin;
+    (window as any).forceNoWin = forceNoWin;
     return () => {
         window.removeEventListener('keydown', handleKeydown);
         window.removeEventListener('keyup', handleKeyup);
@@ -174,10 +174,10 @@ onMount(() => {
 });
 </script>
 
-<main class="{showJackpot ? 'crazy-jackpot' : ''}">
+<main class:crazy-jackpot={showJackpot}>
     <h1>Welcome to SLOTTY!</h1>
-    <div class="budget">Budget: ${budget}</div>
-    <table class="slot-table {spinning ? 'spinning' : ''} {showOtherWin ? 'other-win' : ''}">
+    <div class="budget">Budget: {budget}</div>
+    <table class="slot-table" class:spinning={spinning} class:other-win={showOtherWin}>
         <tbody>
             {#each state as row, r}
                 <tr>
@@ -190,7 +190,7 @@ onMount(() => {
     </table>
     <button id="spin-btn" on:click={spin} disabled={spinning || budget < SPIN_COST}>Spin (or press Space)</button>
     {#if message}
-        <div class="message {showJackpot ? 'jackpot-message' : ''} {showOtherWin ? 'otherwin-message' : ''}">{message}</div>
+        <div class="message" class:jackpot-message={showJackpot} class:otherwin-message={showOtherWin}>{message}</div>
     {/if}
     {#if showJackpot}
         <div class="confetti"></div>
@@ -202,6 +202,38 @@ onMount(() => {
 </main>
 
 <style>
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    min-height: 100vh;
+}
+body {
+    font-family: Arial, sans-serif;
+    background: #f0f0f0;
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    min-height: 100vh;
+    height: 100vh;
+    box-sizing: border-box;
+}
+main {
+    min-height: 100vh;
+    min-width: 100vw;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+    text-align: center;
+}
 .budget {
     font-size: 1.3rem;
     margin-bottom: 10px;
@@ -223,15 +255,23 @@ onMount(() => {
     margin: 20px auto;
     border-collapse: collapse;
     transition: filter 0.2s;
+    width: 90vw;
+    max-width: 700px;
+    height: 50vh;
+    max-height: 400px;
+    table-layout: fixed;
 }
 .slot-table.spinning {
     filter: brightness(1.2) blur(1px);
 }
 .slot-table td {
-    width: 60px;
-    height: 60px;
+    width: 18vw;
+    max-width: 120px;
+    height: 16vh;
+    max-height: 120px;
     border: 2px solid #35424a;
-    font-size: 2.5rem;
+    font-size: 3.5vw;
+    min-font-size: 2rem;
     text-align: center;
     background: #fafafa;
     transition: transform 0.2s;
@@ -259,31 +299,6 @@ onMount(() => {
 }
 #spin-btn:hover:enabled {
     background: #2c3e50;
-}
-main {
-    width: 500px;
-    margin: 40px auto;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    padding: 30px;
-    text-align: center;
-}
-body {
-    font-family: Arial, sans-serif;
-    background: #f0f0f0;
-    margin: 0;
-    padding: 0;
-}
-.crazy-jackpot {
-    animation: screen-shake 0.7s cubic-bezier(.36,.07,.19,.97) 3;
-    background: repeating-linear-gradient(135deg, #fff700 0 20px, #ff00c8 20px 40px, #00fff7 40px 60px);
-}
-@keyframes screen-shake {
-    10%, 90% { transform: translate3d(-2px, 1px, 0); }
-    20%, 80% { transform: translate3d(-4px, -2px, 0); }
-    30%, 50%, 70% { transform: translate3d(4px, 2px, 0); }
-    40%, 60% { transform: translate3d(2px, -4px, 0); }
 }
 .confetti {
     pointer-events: none;
@@ -359,5 +374,68 @@ body {
     30% { transform: scale(1.2) rotate(-2deg); }
     60% { transform: scale(0.95) rotate(2deg); }
     100% { transform: scale(1); }
+}
+
+@media (prefers-color-scheme: dark) {
+  body, main {
+    background: #181a20 !important;
+    color: #f0f0f0;
+  }
+  main {
+    box-shadow: none;
+    border-radius: 0;
+    background: #23272f !important;
+  }
+  .budget {
+    color: #fff;
+  }
+  .slot-table {
+    background: #23272f;
+    border-color: #444;
+  }
+  .slot-table td {
+    background: #23272f;
+    color: #fff;
+    border: 2px solid #444;
+  }
+  .slot-table.spinning {
+    filter: brightness(1.1) blur(1px);
+  }
+  #spin-btn {
+    background: #444b5a;
+    color: #fff;
+  }
+  #spin-btn:disabled {
+    background: #333;
+    color: #aaa;
+  }
+  #spin-btn:hover:enabled {
+    background: #2c3e50;
+  }
+  .message {
+    color: #00e676;
+    text-shadow: 1px 1px 6px #111, 0 0 10px #00e676;
+  }
+  .jackpot-message {
+    color: #ffe600;
+    text-shadow: 2px 2px 8px #ff00c8, 0 0 20px #00fff7;
+  }
+  .otherwin-message {
+    color: #00e676;
+    text-shadow: 1px 1px 6px #111, 0 0 10px #00e676;
+  }
+  .win-cell {
+    background: linear-gradient(90deg, #ffe600 0%, #ff00c8 100%);
+    color: #181a20;
+    border: 3px solid #ff00c8;
+    box-shadow: 0 0 16px 4px #ffe600, 0 0 8px 2px #ff00c8;
+  }
+  .jackpot-explosion {
+    color: #ffe600;
+    text-shadow: 2px 2px 8px #ff00c8, 0 0 20px #00fff7;
+  }
+  .other-win {
+    background: linear-gradient(90deg, #1b5e20 0%, #01579b 100%);
+  }
 }
 </style>

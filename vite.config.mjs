@@ -1,11 +1,11 @@
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 
-/** @type {import('vite').UserConfig} */
 export default {
   plugins: [svelte()],
   root: 'src',
+  base: './',
   build: {
-    outDir: '../public',
+    outDir: '../dist',
     emptyOutDir: true
   },
   server: {
