@@ -5,7 +5,7 @@ export default {
   root: 'src',
   base: './',
   build: {
-    outDir: '../dist',
+    outDir: '../docs',
     emptyOutDir: true
   },
   server: {
