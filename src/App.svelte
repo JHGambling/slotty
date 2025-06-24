@@ -161,9 +161,9 @@ function forceNoWin() {
 }
 
 // Sound effects
-const spinSound = new Audio('/sounds/spin.flac');
-const winSound = new Audio('/sounds/win.wav');
-const jackpotSound = new Audio('/sounds/jackpot.wav');
+const spinSound = new Audio('sounds/spin.flac');
+const winSound = new Audio('sounds/win.mp3');
+const jackpotSound = new Audio('sounds/jackpot.mp3');
 
 function playSound(sound: HTMLAudioElement) {
     sound.currentTime = 0;
