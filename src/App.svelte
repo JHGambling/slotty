@@ -22,7 +22,6 @@ let state: string[][] = Array.from({ length: rows }, () => Array(cols).fill(''))
 let spacePressed = false;
 let spinning = false;
 let spinInterval: ReturnType<typeof setInterval> | null = null;
-let budget = 100;
 let message = '';
 let winType = '';
 let showJackpot = false;
