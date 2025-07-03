@@ -252,6 +252,11 @@ html, body {
     padding: 0;
     width: 100vw;
     min-height: 100vh;
+
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
 }
 body {
     font-family: Arial, sans-serif;
