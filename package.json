@@ -22,5 +22,8 @@
     "casino"
   ],
   "author": "Martin Hangl",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "casino-sdk": "github:JHGambling/sdk"
+  }
 }

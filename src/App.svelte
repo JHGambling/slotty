@@ -1,5 +1,19 @@
 <script lang="ts">
 import { onMount } from 'svelte';
+import { CasinoClient } from "casino-sdk";
+
+const urlParams = new URLSearchParams(window.location.search);
+const wsUrl = urlParams.get("wsUrl") || "ws://localhost:9000/ws";
+const token = urlParams.get("token") || "";
+
+const client = new CasinoClient(wsUrl, {
+    authenticateFromLocalStorage: false,
+    clientType: "game-sdk",
+    token,
+});
+
+const wallet = client.casino.wallet;
+const walletStore = wallet.store;
 
 let symbols = ['🍒', '🍋', '🍊', '🍉', '🍇', '⭐'];
 let rows = 3;
@@ -18,6 +32,10 @@ const SPIN_COST = 5;
 const JACKPOT_REWARD = 50;
 const COLUMN_REWARD = 10;
 const DIAGONAL_REWARD = 15;
+
+onMount(async () => {
+    await client.connect();
+})
 
 function clearWinMatrix() {
     winMatrix = Array.from({ length: rows }, () => Array(cols).fill(false));
@@ -73,13 +91,13 @@ function triggerWinAnimation(type: string) {
 }
 
 function spin() {
-    if (spinning || budget < SPIN_COST) return;
+    if (spinning || ($walletStore.NetworthCents/100) < SPIN_COST) return;
     playSound(spinSound);
     spinning = true;
     message = '';
     winType = '';
     clearWinMatrix();
-    budget -= SPIN_COST;
+    wallet.removeFunds(SPIN_COST * 100); // deduct spin cost from wallet
     let elapsed = 0;
     const duration = 1000; // ms
     const interval = 50; // ms
@@ -95,11 +113,11 @@ function spin() {
             randomizeState();
             const win = checkWin(state);
             if (win) {
-                budget += win.reward;
+                wallet.addFunds(win.reward * 100); // add win to wallet
                 message = `🎉 ${win.type}! You win $${win.reward} 🎉`;
                 winType = win.type;
                 triggerWinAnimation(win.type);
-            } else if (budget < SPIN_COST) {
+            } else if (($walletStore.NetworthCents/100) < SPIN_COST) {
                 message = 'Game over! Not enough budget to spin.';
             }
         }
@@ -203,7 +221,7 @@ onMount(() => {
 
 <main class:crazy-jackpot={showJackpot}>
     <h1>Welcome to SLOTTY!</h1>
-    <div class="budget">Budget: {budget}</div>
+    <div class="budget">Budget: {($walletStore.NetworthCents/100).toFixed(2)}$</div>
     <table class="slot-table" class:spinning={spinning} class:other-win={showOtherWin}>
         <tbody>
             {#each state as row, r}
@@ -215,7 +233,7 @@ onMount(() => {
             {/each}
         </tbody>
     </table>
-    <button id="spin-btn" on:click={spin} disabled={spinning || budget < SPIN_COST}>Spin (or press Space)</button>
+    <button id="spin-btn" on:click={spin} disabled={spinning || ($walletStore.NetworthCents/100) < SPIN_COST}>Spin (or press Space)</button>
     {#if message}
         <div class="message" class:jackpot-message={showJackpot} class:otherwin-message={showOtherWin}>{message}</div>
     {/if}
