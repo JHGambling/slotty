@@ -1,15 +1,21 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { CasinoClient } from "casino-sdk";
+    import { CasinoClient, ClientEvent } from "casino-sdk";
 
     const urlParams = new URLSearchParams(window.location.search);
     const wsUrl = urlParams.get("wsUrl") || "ws://localhost:9000/ws";
     const token = urlParams.get("token") || "";
+    const session = parseInt(urlParams.get("session") || "0");
 
     const client = new CasinoClient(wsUrl, {
         authenticateFromLocalStorage: false,
         clientType: "game-sdk",
         token,
+        session,
+    });
+
+    client.on(ClientEvent.AUTH_SUCCESS, () => {
+        client.sendGameFinishedLoading();
     });
 
     const wallet = client.casino.wallet;
