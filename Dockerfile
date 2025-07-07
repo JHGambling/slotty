@@ -12,12 +12,14 @@ COPY public ./public
 RUN npm install
 RUN npm run build
 
+# Ensure public assets are included in the build output
+RUN cp -r public/* docs/
+
 # Use a lightweight web server for serving the built files
 FROM nginx:alpine AS production
 
 # Copy built files to nginx
 COPY --from=build /app/docs /usr/share/nginx/html
-COPY --from=build /app/public /usr/share/nginx/html
 
 # Expose port 80
 EXPOSE 80
