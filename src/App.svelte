@@ -20,7 +20,7 @@
     });
 
     const wallet = client.casino.wallet;
-    const walletStore = wallet.store;
+    const walletStore = useSDK ? wallet.store : null;
     let volatileBalance = 250; // Default balance for non-SDK mode
 
     let symbols = ["🍒", "🍋", "🍊", "🍉", "🍇", "⭐"];
@@ -120,8 +120,9 @@
     function spin() {
         if (
             spinning ||
-            (useSDK ? $walletStore.NetworthCents / 100 : volatileBalance) <
-                SPIN_COST
+            (useSDK && $walletStore
+                ? $walletStore.NetworthCents / 100
+                : volatileBalance) < SPIN_COST
         )
             return;
         playSound(spinSound);
@@ -157,7 +158,11 @@
                     message = `🎉 ${win.type}! You win $${win.reward} 🎉`;
                     winType = win.type;
                     triggerWinAnimation(win.type);
-                } else if ($walletStore.NetworthCents / 100 < SPIN_COST) {
+                } else if (
+                    useSDK &&
+                    $walletStore &&
+                    $walletStore.NetworthCents / 100 < SPIN_COST
+                ) {
                     message = "Game over! Not enough budget to spin.";
                 }
             }
@@ -273,7 +278,10 @@
 <main class:crazy-jackpot={showJackpot}>
     <h1>Welcome to SLOTTY!</h1>
     <div class="budget">
-        Budget: {($walletStore.NetworthCents / 100).toFixed(2)}$
+        Budget: {($walletStore
+            ? $walletStore.NetworthCents / 100
+            : volatileBalance / 100
+        ).toFixed(2)}$
     </div>
     <table class="slot-table" class:spinning class:other-win={showOtherWin}>
         <tbody>
@@ -289,7 +297,10 @@
     <button
         id="spin-btn"
         on:click={spin}
-        disabled={spinning || $walletStore.NetworthCents / 100 < SPIN_COST}
+        disabled={spinning ||
+            ($walletStore
+                ? $walletStore.NetworthCents / 100
+                : volatileBalance / 100) < SPIN_COST}
         >Spin (or press Space)</button
     >
     {#if message}
