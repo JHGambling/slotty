@@ -6,6 +6,7 @@
     const wsUrl = urlParams.get("wsUrl") || "ws://localhost:9000/ws";
     const token = urlParams.get("token") || "";
     const session = parseInt(urlParams.get("session") || "0");
+    const useSDK = (urlParams.get("usesdk") || "").length > 0;
 
     const client = new CasinoClient(wsUrl, {
         authenticateFromLocalStorage: false,
@@ -20,6 +21,7 @@
 
     const wallet = client.casino.wallet;
     const walletStore = wallet.store;
+    let volatileBalance = 250; // Default balance for non-SDK mode
 
     let symbols = ["🍒", "🍋", "🍊", "🍉", "🍇", "⭐"];
     let rows = 3;
@@ -43,7 +45,7 @@
     const DIAGONAL_REWARD = 15;
 
     onMount(async () => {
-        await client.connect();
+        if (useSDK) await client.connect();
     });
 
     function clearWinMatrix() {
@@ -116,13 +118,22 @@
     }
 
     function spin() {
-        if (spinning || $walletStore.NetworthCents / 100 < SPIN_COST) return;
+        if (
+            spinning ||
+            (useSDK ? $walletStore.NetworthCents / 100 : volatileBalance) <
+                SPIN_COST
+        )
+            return;
         playSound(spinSound);
         spinning = true;
         message = "";
         winType = "";
         clearWinMatrix();
-        wallet.removeFunds(SPIN_COST * 100); // deduct spin cost from wallet
+        if (useSDK) {
+            wallet.removeFunds(SPIN_COST * 100); // deduct spin cost from wallet
+        } else {
+            volatileBalance -= SPIN_COST; // deduct spin cost from volatile balance
+        }
         let elapsed = 0;
         const duration = 1000; // ms
         const interval = 50; // ms
@@ -138,7 +149,11 @@
                 randomizeState();
                 const win = checkWin(state);
                 if (win) {
-                    wallet.addFunds(win.reward * 100); // add win to wallet
+                    if (useSDK) {
+                        wallet.addFunds(win.reward * 100); // add win to wallet
+                    } else {
+                        volatileBalance += win.reward; // add win to volatile balance
+                    }
                     message = `🎉 ${win.type}! You win $${win.reward} 🎉`;
                     winType = win.type;
                     triggerWinAnimation(win.type);
